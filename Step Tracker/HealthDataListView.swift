@@ -8,14 +8,14 @@
 import SwiftUI
 
 struct HealthDataListView: View {
-
+    
     @State private var isShowingAddData = false
-
+    
     @State private var selectedDate: Date = .now
     @State private var valueToAdd: String = ""
-
+    
     var metric: HealthMetricContext
-
+    
     var body: some View {
         List(0..<10) { i in
             HStack {
@@ -34,7 +34,7 @@ struct HealthDataListView: View {
             }
         }
     }
-
+    
     var addDataView: some View {
         NavigationStack {
             Form {
@@ -55,7 +55,7 @@ struct HealthDataListView: View {
                         // Do code later
                     }
                 }
-
+                
                 ToolbarItem(placement: .topBarLeading) {
                     Button("Dismiss") {
                         isShowingAddData = false
