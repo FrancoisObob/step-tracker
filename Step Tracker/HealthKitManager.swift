@@ -15,7 +15,7 @@ import Observation
     
     let types: Set = [HKQuantityType(.stepCount), HKQuantityType(.bodyMass)]
 
-    var stepData: [HealthMetric] = []
+    var stepData: [HealthMetric] = HealthMetric.mockData
     var weightData: [HealthMetric] = []
 
     func fetchWeights() async {
@@ -32,11 +32,15 @@ import Observation
             anchorDate: endDate,
             intervalComponents: DateComponents(day: 1)
         )
-        
-        let weights = try! await weightsQuery.result(for: store)
-        weightData = weights.statistics().map {
-            .init(date: $0.startDate,
-                  value: $0.mostRecentQuantity()?.doubleValue(for: .pound()) ?? 0)
+
+        do {
+            let weights = try await weightsQuery.result(for: store)
+            weightData = weights.statistics().map {
+                .init(date: $0.startDate,
+                      value: $0.mostRecentQuantity()?.doubleValue(for: .pound()) ?? 0)
+            }
+        } catch {
+            print("Error fetching weights: \(error)")
         }
     }
     
@@ -54,11 +58,15 @@ import Observation
             anchorDate: endDate,
             intervalComponents: DateComponents(day: 1)
         )
-        
-        let stepsCounts = try! await stepsQuery.result(for: store)
-        stepData = stepsCounts.statistics().map {
-            .init(date: $0.startDate,
-                  value: $0.sumQuantity()?.doubleValue(for: .count()) ?? 0)
+
+        do {
+            let stepsCounts = try await stepsQuery.result(for: store)
+            stepData = stepsCounts.statistics().map {
+                .init(date: $0.startDate,
+                      value: $0.sumQuantity()?.doubleValue(for: .count()) ?? 0)
+            }
+        } catch {
+            print("Error fetching step count: \(error)")
         }
     }
     

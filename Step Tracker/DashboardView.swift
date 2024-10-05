@@ -35,6 +35,12 @@ struct DashboardView: View {
     @State var isShowingPermissionPriming = false
     @State var selectedStat: HealthMetricContext = .steps
 
+    var avgStepCounts: Double {
+        guard hkManager.stepData.isEmpty == false else { return 0 }
+        let totalSteps = hkManager.stepData.map { $0.value }.reduce(0, +)
+        return totalSteps / Double(hkManager.stepData.count)
+    }
+
     var body: some View {
         NavigationStack {
             ScrollView {
@@ -55,7 +61,7 @@ struct DashboardView: View {
                                         .font(.title3.bold())
                                         .foregroundStyle(selectedStat.tintColor)
 
-                                    Text("Avg: 10K Steps")
+                                    Text("Avg: \(Int(avgStepCounts)) Steps")
                                         .font(.caption)
                                 }
 
@@ -68,14 +74,31 @@ struct DashboardView: View {
                         .padding(.bottom, 12)
 
                         Chart {
+                            RuleMark(y: .value("Average", avgStepCounts))
+                                .foregroundStyle(.secondary)
+                                .lineStyle(.init(lineWidth: 1, dash: [5]))
+
                             ForEach(hkManager.stepData) { steps in
                                 BarMark(
                                     x: .value("Date", steps.date, unit: .day),
                                     y: .value("Steps", steps.value)
                                 )
+                                .foregroundStyle(Color.pink.gradient)
                             }
                         }
                         .frame(height: 150)
+                        .chartXAxis {
+                            AxisMarks {
+                                AxisValueLabel(format: .dateTime.month(.defaultDigits).day())
+                            }
+                        }
+                        .chartYAxis {
+                            AxisMarks { value in
+                                AxisGridLine()
+                                    .foregroundStyle(.secondary.opacity(0.3))
+                                AxisValueLabel((value.as(Double.self) ?? 0).formatted(.number.notation(.compactName)))
+                            }
+                        }
                     }
                     .padding()
                     .background(RoundedRectangle(cornerRadius: 12).fill(Color(.secondarySystemBackground)))
