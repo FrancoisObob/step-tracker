@@ -15,7 +15,10 @@ import Observation
     
     let types: Set = [HKQuantityType(.stepCount), HKQuantityType(.bodyMass)]
 
-    var stepData: [HealthMetric] = HealthMetric.mockData
+    // Uncomment to use mock data for Preview
+//    var stepData: [HealthMetric] = HealthMetric.mockData
+    var stepData: [HealthMetric] = []
+
     var weightData: [HealthMetric] = []
 
     func fetchWeights() async {
