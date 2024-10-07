@@ -3,32 +3,29 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 56;
+	objectVersion = 70;
 	objects = {
 
 /* Begin PBXBuildFile section */
-		0F5F7F262CB1DBC200875424 /* HealthMetric.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0F5F7F252CB1DBC200875424 /* HealthMetric.swift */; };
-		0FA2855A2CAF229200B97B02 /* HealthDataListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0FA285592CAF229200B97B02 /* HealthDataListView.swift */; };
-		0FA2855C2CAF313600B97B02 /* HealthKitPermissionPrimingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0FA2855B2CAF313600B97B02 /* HealthKitPermissionPrimingView.swift */; };
-		0FA2855E2CAF391500B97B02 /* HealthKitManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0FA2855D2CAF391500B97B02 /* HealthKitManager.swift */; };
 		0FC56ECD2BFBB56A00D78AF1 /* Step_TrackerApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0FC56ECC2BFBB56A00D78AF1 /* Step_TrackerApp.swift */; };
-		0FC56ECF2BFBB56A00D78AF1 /* DashboardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0FC56ECE2BFBB56A00D78AF1 /* DashboardView.swift */; };
 		0FC56ED12BFBB57200D78AF1 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 0FC56ED02BFBB57200D78AF1 /* Assets.xcassets */; };
 		0FC56ED42BFBB57200D78AF1 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 0FC56ED32BFBB57200D78AF1 /* Preview Assets.xcassets */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		0F5F7F252CB1DBC200875424 /* HealthMetric.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HealthMetric.swift; sourceTree = "<group>"; };
-		0FA285592CAF229200B97B02 /* HealthDataListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HealthDataListView.swift; sourceTree = "<group>"; };
-		0FA2855B2CAF313600B97B02 /* HealthKitPermissionPrimingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HealthKitPermissionPrimingView.swift; sourceTree = "<group>"; };
-		0FA2855D2CAF391500B97B02 /* HealthKitManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HealthKitManager.swift; sourceTree = "<group>"; };
 		0FBBB7F02CAF3F110094A35B /* Step Tracker.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = "Step Tracker.entitlements"; sourceTree = "<group>"; };
 		0FC56EC92BFBB56A00D78AF1 /* Step Tracker.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Step Tracker.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		0FC56ECC2BFBB56A00D78AF1 /* Step_TrackerApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Step_TrackerApp.swift; sourceTree = "<group>"; };
-		0FC56ECE2BFBB56A00D78AF1 /* DashboardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DashboardView.swift; sourceTree = "<group>"; };
 		0FC56ED02BFBB57200D78AF1 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		0FC56ED32BFBB57200D78AF1 /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
+
+/* Begin PBXFileSystemSynchronizedRootGroup section */
+		0F5F7F2D2CB4782D00875424 /* Screens */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = Screens; sourceTree = "<group>"; };
+		0F5F7F2E2CB4784300875424 /* Charts */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = Charts; sourceTree = "<group>"; };
+		0F5F7F2F2CB4789300875424 /* Model */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = Model; sourceTree = "<group>"; };
+		0F5F7F302CB478AA00875424 /* Managers */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = Managers; sourceTree = "<group>"; };
+/* End PBXFileSystemSynchronizedRootGroup section */
 
 /* Begin PBXFrameworksBuildPhase section */
 		0FC56EC62BFBB56A00D78AF1 /* Frameworks */ = {
@@ -62,11 +59,10 @@
 			children = (
 				0FBBB7F02CAF3F110094A35B /* Step Tracker.entitlements */,
 				0FC56ECC2BFBB56A00D78AF1 /* Step_TrackerApp.swift */,
-				0FC56ECE2BFBB56A00D78AF1 /* DashboardView.swift */,
-				0FA285592CAF229200B97B02 /* HealthDataListView.swift */,
-				0FA2855B2CAF313600B97B02 /* HealthKitPermissionPrimingView.swift */,
-				0FA2855D2CAF391500B97B02 /* HealthKitManager.swift */,
-				0F5F7F252CB1DBC200875424 /* HealthMetric.swift */,
+				0F5F7F302CB478AA00875424 /* Managers */,
+				0F5F7F2F2CB4789300875424 /* Model */,
+				0F5F7F2E2CB4784300875424 /* Charts */,
+				0F5F7F2D2CB4782D00875424 /* Screens */,
 				0FC56ED02BFBB57200D78AF1 /* Assets.xcassets */,
 				0FC56ED22BFBB57200D78AF1 /* Preview Content */,
 			);
@@ -95,6 +91,12 @@
 			buildRules = (
 			);
 			dependencies = (
+			);
+			fileSystemSynchronizedGroups = (
+				0F5F7F2D2CB4782D00875424 /* Screens */,
+				0F5F7F2E2CB4784300875424 /* Charts */,
+				0F5F7F2F2CB4789300875424 /* Model */,
+				0F5F7F302CB478AA00875424 /* Managers */,
 			);
 			name = "Step Tracker";
 			productName = "Step Tracker";
@@ -151,12 +153,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				0FA2855A2CAF229200B97B02 /* HealthDataListView.swift in Sources */,
-				0FC56ECF2BFBB56A00D78AF1 /* DashboardView.swift in Sources */,
 				0FC56ECD2BFBB56A00D78AF1 /* Step_TrackerApp.swift in Sources */,
-				0FA2855E2CAF391500B97B02 /* HealthKitManager.swift in Sources */,
-				0FA2855C2CAF313600B97B02 /* HealthKitPermissionPrimingView.swift in Sources */,
-				0F5F7F262CB1DBC200875424 /* HealthMetric.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
