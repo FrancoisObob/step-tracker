@@ -55,7 +55,7 @@ struct StepPieChart: View {
             .frame(height: 240)
             .chartBackground { proxy in
                 GeometryReader { geometry in
-                    if let plotFrame = proxy.plotFrame {
+                    if proxy.plotFrame != nil {
                         let frame = geometry.frame(in: .local)
                         if let selectedWeekday {
                             VStack {

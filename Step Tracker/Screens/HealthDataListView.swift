@@ -13,7 +13,7 @@ struct HealthDataListView: View {
     @State private var isShowingAddData = false
     @State private var selectedDate: Date = .now
     @State private var valueToAdd: String = ""
-    
+
     var metric: HealthMetricContext
 
     var listData: [HealthMetric] {
@@ -42,7 +42,10 @@ struct HealthDataListView: View {
     var addDataView: some View {
         NavigationStack {
             Form {
-                DatePicker("Date", selection: $selectedDate, displayedComponents: .date)
+                DatePicker("Date",
+                           selection: $selectedDate,
+                           in: .distantPast...Date(),
+                           displayedComponents: .date)
                 HStack {
                     Text(metric.title)
                     Spacer()
@@ -57,17 +60,23 @@ struct HealthDataListView: View {
                 ToolbarItem(placement: .topBarTrailing) {
                     Button("Add Data") {
                         Task {
-                            switch metric {
-                            case .steps:
-                                await hkManager.addStepData(for: selectedDate,
-                                                            value: Double(valueToAdd)!)
-                                await hkManager.fetchStepCount()
-                            case .weight:
-                                await hkManager.addWeightData(for: selectedDate,
-                                                              value: Double(valueToAdd)!)
-                                await hkManager.fetchWeights()
+                            do {
+                                switch metric {
+                                case .steps:
+                                    try await hkManager.addStepData(for: selectedDate,
+                                                                value: Double(valueToAdd)!)
+                                    try await hkManager.fetchStepCount()
+                                case .weight:
+                                    try await hkManager.addWeightData(for: selectedDate,
+                                                                  value: Double(valueToAdd)!)
+                                    try await hkManager.fetchWeights()
+                                }
+                                isShowingAddData = false
+                            } catch STError.sharingDenied(let quantityType) {
+                                print("Sharing denied for \(quantityType)")
+                            } catch {
+                                print("Data List View Unable to complete request")
                             }
-                            isShowingAddData = false
                         }
                     }
                 }
