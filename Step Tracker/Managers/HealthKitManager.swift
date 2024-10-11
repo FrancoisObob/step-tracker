@@ -16,10 +16,11 @@ import Observation
     let types: Set = [HKQuantityType(.stepCount), HKQuantityType(.bodyMass)]
 
     // Uncomment to use mock data for Preview
-//    var stepData: [HealthMetric] = HealthMetric.mockData
-    var stepData: [HealthMetric] = []
+    var stepData: [HealthMetric] = MockData.steps
+    var weightData: [HealthMetric] = MockData.weights
 
-    var weightData: [HealthMetric] = []
+//    var stepData: [HealthMetric] = []
+//    var weightData: [HealthMetric] = []
 
     func fetchWeights() async {
         let calendar = Calendar.current
@@ -72,7 +73,24 @@ import Observation
             print("Error fetching step count: \(error)")
         }
     }
-    
+
+    func addStepData(for date: Date, value: Double) async {
+        let stepQuantity = HKQuantity(unit: .count(), doubleValue: value)
+        let stepSample = HKQuantitySample(type: .init(.stepCount),
+                                          quantity: stepQuantity,
+                                          start: date,
+                                          end: date)
+        try! await store.save(stepSample)
+    }
+
+    func addWeightData(for date: Date, value: Double) async {
+        let weightQuantity = HKQuantity(unit: .pound(), doubleValue: value)
+        let weightSample = HKQuantitySample(type: .init(.bodyMass),
+                                            quantity: weightQuantity,
+                                            start: date,
+                                            end: date)
+        try! await store.save(weightSample)
+    }
 
     func addSimulatorData() async {
         var mockSample: [HKQuantitySample] = []
