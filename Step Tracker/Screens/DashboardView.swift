@@ -47,32 +47,30 @@ struct DashboardView: View {
                     }
                     .pickerStyle(.segmented)
 
-                    StepBarChart(selectedStat: selectedStat, chartData: hkManager.stepData)
 
-                    VStack(alignment: .leading) {
-                        VStack(alignment: .leading) {
-                            Label("Averages", systemImage: "calendar")
-                                .font(.title3.bold())
-                                .foregroundStyle(selectedStat.tintColor)
+                    switch selectedStat {
+                    case .steps:
+                        StepBarChart(selectedStat: selectedStat,
+                                     chartData: hkManager.stepData)
 
-                            Text("Last 28 days")
-                                .font(.caption)
-                                .foregroundStyle(.secondary)
+                        StepPieChart(selectedStat: selectedStat,
+                                     chartData: ChartMath.averageWeekdayCount(for: hkManager.stepData))
+                    case .weight:
+                        WeightLineChart(selectedStat: selectedStat,
+                                        chartData: hkManager.weightData)
 
-                        }
-                        .padding(.bottom, 12)
-
-                        RoundedRectangle(cornerRadius: 12)
-                            .foregroundStyle(.secondary)
-                            .frame(height: 240)
+                        WeightBarChart(selectedStat: selectedStat,
+                                       chartData: ChartMath.averageDailyWeightDiffs(for: hkManager.weightData))
                     }
-                    .padding()
-                    .background(RoundedRectangle(cornerRadius: 12).fill(Color(.secondarySystemBackground)))
+
                 }
             }
             .padding()
             .task {
+//                await hkManager.addSimulatorData()
                 await hkManager.fetchStepCount()
+                await hkManager.fetchWeights()
+                
                 isShowingPermissionPriming = !hasSeenPermissionPriming
             }
             .navigationTitle("Dashboard")
