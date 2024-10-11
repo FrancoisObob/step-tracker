@@ -17,4 +17,25 @@ struct ChartMath {
                          value: $0.reduce(0) { $0 + $1.value } / Double($0.count))
             }
     }
+
+    static func averageDailyWeightDiffs(for weights: [HealthMetric]) -> [WeekdayChartData] {
+        var diffValues: [(date: Date, value: Double)] = []
+
+        for i in 1..<weights.count {
+            let date = weights[i].date
+            let diff = weights[i].value - weights[i-1].value
+            diffValues.append((date: date, value: diff))
+        }
+
+        for diff in diffValues {
+            print("date: \(diff.date), value: \(diff.value)")
+        }
+
+        return diffValues
+            .sorted { $0.date.weekdayInt < $1.date.weekdayInt }
+            .chunked { $0.date.weekdayInt == $1.date.weekdayInt }
+            .map { .init(date: $0.first!.date,
+                         value: $0.reduce(0) { $0 + $1.value } / Double($0.count))
+            }
+    }
 }
