@@ -70,15 +70,12 @@ struct StepBarChart: View {
                         x: .value("Date", steps.date, unit: .day),
                         y: .value("Steps", steps.value)
                     )
-                    .foregroundStyle(Color.pink.gradient)
+                    .foregroundStyle(selectedStat.tintColor)
                     .opacity(selectedDate == nil || steps.date == selectedHealthMetric?.date ? 1.0 : 0.3)
                 }
             }
             .frame(height: 150)
             .chartXSelection(value: $selectedDate.animation())
-//            .onChange(of: selectedDate) { oldValue, newValue in
-//                print(newValue ?? Date())
-//            }
             .chartXAxis {
                 AxisMarks {
                     AxisValueLabel(format: .dateTime.month(.defaultDigits).day())
@@ -112,7 +109,6 @@ struct StepBarChart: View {
             .fill(Color(.secondarySystemBackground))
             .shadow(color: .secondary.opacity(0.3), radius: 2, x: 2, y: 2)
         )
-
     }
 }
 

@@ -27,10 +27,6 @@ struct ChartMath {
             diffValues.append((date: date, value: diff))
         }
 
-        for diff in diffValues {
-            print("date: \(diff.date), value: \(diff.value)")
-        }
-
         return diffValues
             .sorted { $0.date.weekdayInt < $1.date.weekdayInt }
             .chunked { $0.date.weekdayInt == $1.date.weekdayInt }
