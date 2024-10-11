@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import Charts
 
 enum HealthMetricContext: CaseIterable, Identifiable {
     case steps, weight
@@ -31,6 +32,7 @@ struct DashboardView: View {
 
     @Environment(HealthKitManager.self) private var hkManager
     @AppStorage("hasSeenPermissionPriming") private var hasSeenPermissionPriming = false
+
     @State var isShowingPermissionPriming = false
     @State var selectedStat: HealthMetricContext = .steps
 
@@ -38,40 +40,14 @@ struct DashboardView: View {
         NavigationStack {
             ScrollView {
                 VStack(spacing: 20) {
-
                     Picker("Selected Stat", selection: $selectedStat) {
                         ForEach(HealthMetricContext.allCases) {
                             Text($0.title)
                         }
                     }
-                    .pickerStyle(SegmentedPickerStyle())
+                    .pickerStyle(.segmented)
 
-                    VStack {
-                        NavigationLink(value: selectedStat){
-                            HStack {
-                                VStack(alignment: .leading) {
-                                    Label("Steps", systemImage: "figure.walk")
-                                        .font(.title3.bold())
-                                        .foregroundStyle(selectedStat.tintColor)
-
-                                    Text("Avg: 10K Steps")
-                                        .font(.caption)
-                                }
-
-                                Spacer()
-
-                                Image(systemName: "chevron.right")
-                            }
-                        }
-                        .foregroundStyle(.secondary)
-                        .padding(.bottom, 12)
-
-                        RoundedRectangle(cornerRadius: 12)
-                            .foregroundStyle(.secondary)
-                            .frame(height: 150)
-                    }
-                    .padding()
-                    .background(RoundedRectangle(cornerRadius: 12).fill(Color(.secondarySystemBackground)))
+                    StepBarChart(selectedStat: selectedStat, chartData: hkManager.stepData)
 
                     VStack(alignment: .leading) {
                         VStack(alignment: .leading) {
@@ -96,6 +72,7 @@ struct DashboardView: View {
             }
             .padding()
             .task {
+                await hkManager.fetchStepCount()
                 isShowingPermissionPriming = !hasSeenPermissionPriming
             }
             .navigationTitle("Dashboard")

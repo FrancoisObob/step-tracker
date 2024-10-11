@@ -14,7 +14,13 @@ import Observation
     let store = HKHealthStore()
     
     let types: Set = [HKQuantityType(.stepCount), HKQuantityType(.bodyMass)]
-    
+
+    // Uncomment to use mock data for Preview
+//    var stepData: [HealthMetric] = HealthMetric.mockData
+    var stepData: [HealthMetric] = []
+
+    var weightData: [HealthMetric] = []
+
     func fetchWeights() async {
         let calendar = Calendar.current
         let today = calendar.startOfDay(for: .now)
@@ -29,9 +35,16 @@ import Observation
             anchorDate: endDate,
             intervalComponents: DateComponents(day: 1)
         )
-        
-        let weights = try! await weightsQuery.result(for: store)
-        
+
+        do {
+            let weights = try await weightsQuery.result(for: store)
+            weightData = weights.statistics().map {
+                .init(date: $0.startDate,
+                      value: $0.mostRecentQuantity()?.doubleValue(for: .pound()) ?? 0)
+            }
+        } catch {
+            print("Error fetching weights: \(error)")
+        }
     }
     
     func fetchStepCount() async {
@@ -48,8 +61,16 @@ import Observation
             anchorDate: endDate,
             intervalComponents: DateComponents(day: 1)
         )
-        
-        let stepsCounts = try! await stepsQuery.result(for: store)
+
+        do {
+            let stepsCounts = try await stepsQuery.result(for: store)
+            stepData = stepsCounts.statistics().map {
+                .init(date: $0.startDate,
+                      value: $0.sumQuantity()?.doubleValue(for: .count()) ?? 0)
+            }
+        } catch {
+            print("Error fetching step count: \(error)")
+        }
     }
     
     /*
