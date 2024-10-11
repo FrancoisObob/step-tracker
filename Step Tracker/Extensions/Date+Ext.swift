@@ -8,7 +8,11 @@
 import Foundation
 
 extension Date {
-    var weekDayInt: Int {
+    var weekdayInt: Int {
         Calendar.current.component(.weekday, from: self)
+    }
+
+    var weekdayTitle: String {
+        formatted(.dateTime.weekday(.wide))
     }
 }
