@@ -76,9 +76,9 @@ struct StepBarChart: View {
             }
             .frame(height: 150)
             .chartXSelection(value: $selectedDate.animation())
-            .onChange(of: selectedDate) { oldValue, newValue in
-                print(newValue ?? Date())
-            }
+//            .onChange(of: selectedDate) { oldValue, newValue in
+//                print(newValue ?? Date())
+//            }
             .chartXAxis {
                 AxisMarks {
                     AxisValueLabel(format: .dateTime.month(.defaultDigits).day())
@@ -104,7 +104,7 @@ struct StepBarChart: View {
 
             Text(selectedHealthMetric?.value ?? 0, format: .number.precision(.fractionLength(0)))
                 .fontWeight(.heavy)
-                .foregroundStyle(.pink)
+                .foregroundStyle(selectedStat.tintColor)
 
         }
         .padding()

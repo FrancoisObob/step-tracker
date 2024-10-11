@@ -73,35 +73,35 @@ import Observation
         }
     }
     
-    /*
-     func addSimulatorData() async {
-     var mockSample: [HKQuantitySample] = []
-     
-     for i in 0..<28 {
-     
-     let stepQuantity = HKQuantity(unit: .count(), doubleValue: .random(in: 4000...20000))
-     let weightQuentity = HKQuantity(unit: .pound(), doubleValue: .random(in: 160 + Double(i/3)...165 + Double(i/3)))
-     
-     
-     let startDate = Calendar.current.date(byAdding: .day, value: -i, to: .now)!
-     let endDate = Calendar.current.date(byAdding: .day, value: 1, to: startDate)!
-     
-     let stepSample = HKQuantitySample(type: .init(.stepCount),
-     quantity: stepQuantity,
-     start: startDate,
-     end: endDate)
-     
-     let weightSample = HKQuantitySample(type: .init(.bodyMass),
-     quantity: weightQuentity,
-     start: startDate,
-     end: endDate)
-     
-     mockSample.append(stepSample)
-     mockSample.append(weightSample)
-     }
-     
-     try! await store.save(mockSample)
-     print("✅ Simulator data added")
-     }
-     */
+
+    func addSimulatorData() async {
+        var mockSample: [HKQuantitySample] = []
+
+        for i in 0..<28 {
+
+            let stepQuantity = HKQuantity(unit: .count(), doubleValue: .random(in: 4000...20000))
+            let weightQuantity = HKQuantity(unit: .pound(), doubleValue: .random(in: 160 + Double(i/3)...165 + Double(i/3)))
+
+
+            let startDate = Calendar.current.date(byAdding: .day, value: -i, to: .now)!
+            let endDate = Calendar.current.date(byAdding: .day, value: 1, to: startDate)!
+
+            let stepSample = HKQuantitySample(type: .init(.stepCount),
+                                              quantity: stepQuantity,
+                                              start: startDate,
+                                              end: endDate)
+
+            let weightSample = HKQuantitySample(type: .init(.bodyMass),
+                                                quantity: weightQuantity,
+                                                start: startDate,
+                                                end: endDate)
+
+            mockSample.append(stepSample)
+            mockSample.append(weightSample)
+        }
+
+        try! await store.save(mockSample)
+        print("✅ Simulator data added")
+    }
+
 }
