@@ -77,36 +77,7 @@ struct HealthDataListView: View {
             })
             .toolbar {
                 ToolbarItem(placement: .topBarTrailing) {
-                    Button("Add Data") {
-                        guard let value = Double(valueToAdd) else {
-                            writeError = .invalidValue
-                            isShowingAlert = true
-                            valueToAdd = ""
-                            return
-                        }
-
-                        Task {
-                            do {
-                                switch metric {
-                                case .steps:
-                                    try await hkManager.addStepData(for: selectedDate,
-                                                                value: value)
-                                    try await hkManager.fetchStepCount()
-                                case .weight:
-                                    try await hkManager.addWeightData(for: selectedDate,
-                                                                  value: value)
-                                    try await hkManager.fetchWeights()
-                                }
-                                isShowingAddData = false
-                            } catch STError.sharingDenied(let quantityType) {
-                                writeError = .sharingDenied(quantityType: quantityType)
-                                isShowingAlert = true
-                            } catch {
-                                writeError = .unableToCompleteRequest
-                                isShowingAlert = true
-                            }
-                        }
-                    }
+                    Button("Add Data") { addDataButtonTapped() }
                 }
                 
                 ToolbarItem(placement: .topBarLeading) {
@@ -114,6 +85,36 @@ struct HealthDataListView: View {
                         isShowingAddData = false
                     }
                 }
+            }
+        }
+    }
+
+    private func addDataButtonTapped() {
+        guard let value = Double(valueToAdd) else {
+            writeError = .invalidValue
+            isShowingAlert = true
+            valueToAdd = ""
+            return
+        }
+
+        Task {
+            do {
+                switch metric {
+                case .steps:
+                    try await hkManager.addStepData(for: selectedDate, value: value)
+                    hkManager.steps = try await hkManager.fetchStepCount()
+                case .weight:
+                    try await hkManager.addWeightData(for: selectedDate, value: value)
+                    hkManager.weights = try await hkManager.fetchWeights()
+                }
+
+                isShowingAddData = false
+            } catch STError.sharingDenied(let quantityType) {
+                writeError = .sharingDenied(quantityType: quantityType)
+                isShowingAlert = true
+            } catch {
+                writeError = .unableToCompleteRequest
+                isShowingAlert = true
             }
         }
     }

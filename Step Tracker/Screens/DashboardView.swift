@@ -67,30 +67,13 @@ struct DashboardView: View {
                 }
             }
             .padding()
-            .task {
-                do {
-                    // await hkManager.addSimulatorData()
-
-                    // Make this concurrent
-                    try await hkManager.fetchStepCount()
-                    try await hkManager.fetchWeights()
-
-                } catch STError.authNotDetermined {
-                    isShowingPermissionPriming = true
-                } catch STError.noData {
-                    fetchError = .noData
-                    isPresentingHealthKitPermissionAlert = true
-                } catch {
-                    fetchError = .unableToCompleteRequest
-                    isPresentingHealthKitPermissionAlert = true
-                }
-            }
+            .task { fetchHealthData() }
             .navigationTitle("Dashboard")
             .navigationDestination(for: HealthMetricContext.self) { metric in
                 HealthDataListView(metric: metric)
             }
             .sheet(isPresented: $isShowingPermissionPriming) {
-                // fetch health data
+                fetchHealthData()
             } content: {
                 HealthKitPermissionPrimingView()
             }
@@ -102,6 +85,30 @@ struct DashboardView: View {
             }
         }
         .tint(selectedStat.tintColor)
+    }
+
+    private func fetchHealthData() {
+        Task {
+            do {
+                // await hkManager.generateHealthData()
+
+                // Make this concurrent
+                async let steps = hkManager.fetchStepCount()
+                async let weights = hkManager.fetchWeights()
+
+                hkManager.steps = try await steps
+                hkManager.weights = try await weights
+
+            } catch STError.authNotDetermined {
+                isShowingPermissionPriming = true
+            } catch STError.noData {
+                fetchError = .noData
+                isPresentingHealthKitPermissionAlert = true
+            } catch {
+                fetchError = .unableToCompleteRequest
+                isPresentingHealthKitPermissionAlert = true
+            }
+        }
     }
 }
 
