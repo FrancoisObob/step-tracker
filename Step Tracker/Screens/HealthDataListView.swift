@@ -13,6 +13,8 @@ struct HealthDataListView: View {
     @State private var isShowingAddData = false
     @State private var selectedDate: Date = .now
     @State private var valueToAdd: String = ""
+    @State private var isShowingAlert: Bool = false
+    @State private var writeError: STError = .noData
 
     var metric: HealthMetricContext
 
@@ -56,6 +58,23 @@ struct HealthDataListView: View {
                 }
             }
             .navigationTitle(metric.title)
+            .alert(isPresented: $isShowingAlert,
+                   error: writeError,
+                   actions: { writeError in
+                switch writeError {
+                case .authNotDetermined, .noData, .unableToCompleteRequest:
+                    EmptyView()
+                case .sharingDenied(let quantityType):
+                    Button("Settings") {
+                        UIApplication.shared.open(URL(string: UIApplication.openSettingsURLString)!)
+                    }
+
+                    Button("Cancel", role: .cancel) {}
+                }
+            },
+                   message: { writeError in
+                Text(writeError.failureReason)
+            })
             .toolbar {
                 ToolbarItem(placement: .topBarTrailing) {
                     Button("Add Data") {
@@ -73,9 +92,11 @@ struct HealthDataListView: View {
                                 }
                                 isShowingAddData = false
                             } catch STError.sharingDenied(let quantityType) {
-                                print("Sharing denied for \(quantityType)")
+                                writeError = .sharingDenied(quantityType: quantityType)
+                                isShowingAlert = true
                             } catch {
-                                print("Data List View Unable to complete request")
+                                writeError = .unableToCompleteRequest
+                                isShowingAlert = true
                             }
                         }
                     }
