@@ -5,8 +5,8 @@
 //  Created by Francois Lambert on 10/7/24.
 //
 
-import SwiftUI
 import Charts
+import SwiftUI
 
 struct StepBarChart: View {
 
@@ -31,7 +31,7 @@ struct StepBarChart: View {
 
     var body: some View {
         VStack {
-            NavigationLink(value: selectedStat){
+            NavigationLink(value: selectedStat) {
                 HStack {
                     VStack(alignment: .leading) {
                         Label("Steps", systemImage: "figure.walk")
@@ -50,68 +50,101 @@ struct StepBarChart: View {
             .foregroundStyle(.secondary)
             .padding(.bottom, 12)
 
-            Chart {
-                if let selectedHealthMetric {
-                    RuleMark(x: .value("Selected Metric", selectedHealthMetric.date, unit: .day))
+            if chartData.isEmpty {
+                ChartEmptyView(
+                    systemImageName: "chart.bar", title: "No Data",
+                    description:
+                        "There is no step count data found in Health app.")
+
+            } else {
+                Chart {
+                    if let selectedHealthMetric {
+                        RuleMark(
+                            x: .value(
+                                "Selected Metric", selectedHealthMetric.date,
+                                unit: .day)
+                        )
                         .foregroundStyle(.secondary.opacity(0.3))
                         .offset(y: -10)
-                        .annotation(position: .top,
-                                    spacing: 0,
-                                    overflowResolution: .init(x: .fit(to: .chart),
-                                                              y: .disabled)) { annotationView }
-                }
+                        .annotation(
+                            position: .top,
+                            spacing: 0,
+                            overflowResolution: .init(
+                                x: .fit(to: .chart),
+                                y: .disabled)
+                        ) { annotationView }
+                    }
 
-                RuleMark(y: .value("Average", avgStepCounts))
-                    .foregroundStyle(.secondary)
-                    .lineStyle(.init(lineWidth: 1, dash: [5]))
+                    RuleMark(y: .value("Average", avgStepCounts))
+                        .foregroundStyle(.secondary)
+                        .lineStyle(.init(lineWidth: 1, dash: [5]))
 
-                ForEach(chartData) { steps in
-                    BarMark(
-                        x: .value("Date", steps.date, unit: .day),
-                        y: .value("Steps", steps.value)
-                    )
-                    .foregroundStyle(selectedStat.tintColor)
-                    .opacity(selectedDate == nil || steps.date == selectedHealthMetric?.date ? 1.0 : 0.3)
+                    ForEach(chartData) { steps in
+                        BarMark(
+                            x: .value("Date", steps.date, unit: .day),
+                            y: .value("Steps", steps.value)
+                        )
+                        .foregroundStyle(selectedStat.tintColor)
+                        .opacity(
+                            selectedDate == nil
+                                || steps.date == selectedHealthMetric?.date
+                                ? 1.0 : 0.3)
+                    }
                 }
-            }
-            .frame(height: 150)
-            .chartXSelection(value: $selectedDate.animation())
-            .chartXAxis {
-                AxisMarks {
-                    AxisValueLabel(format: .dateTime.month(.defaultDigits).day())
+                .frame(height: 150)
+                .chartXSelection(value: $selectedDate.animation())
+                .chartXAxis {
+                    AxisMarks {
+                        AxisValueLabel(
+                            format: .dateTime.month(.defaultDigits).day())
+                    }
                 }
-            }
-            .chartYAxis {
-                AxisMarks { value in
-                    AxisGridLine()
-                        .foregroundStyle(.secondary.opacity(0.3))
-                    AxisValueLabel((value.as(Double.self) ?? 0).formatted(.number.notation(.compactName)))
+                .chartYAxis {
+                    AxisMarks { value in
+                        AxisGridLine()
+                            .foregroundStyle(.secondary.opacity(0.3))
+                        AxisValueLabel(
+                            (value.as(Double.self) ?? 0).formatted(
+                                .number.notation(.compactName)))
+                    }
                 }
             }
         }
         .padding()
-        .background(RoundedRectangle(cornerRadius: 12).fill(Color(.secondarySystemBackground)))
+        .background(
+            RoundedRectangle(cornerRadius: 12).fill(
+                Color(.secondarySystemBackground))
+        )
+        .sensoryFeedback(.selection, trigger: selectedDate?.weekdayInt)
     }
 
     var annotationView: some View {
         VStack(alignment: .leading) {
-            Text(selectedHealthMetric?.date ?? .now, format: .dateTime.weekday(.abbreviated).month(.abbreviated).day())
-                .font(.footnote.bold())
-                .foregroundStyle(.secondary)
+            Text(
+                selectedHealthMetric?.date ?? .now,
+                format: .dateTime.weekday(.abbreviated).month(.abbreviated)
+                    .day()
+            )
+            .font(.footnote.bold())
+            .foregroundStyle(.secondary)
 
-            Text(selectedHealthMetric?.value ?? 0, format: .number.precision(.fractionLength(0)))
-                .fontWeight(.heavy)
-                .foregroundStyle(selectedStat.tintColor)
+            Text(
+                selectedHealthMetric?.value ?? 0,
+                format: .number.precision(.fractionLength(0))
+            )
+            .fontWeight(.heavy)
+            .foregroundStyle(selectedStat.tintColor)
 
         }
         .padding()
-        .background(RoundedRectangle(cornerRadius: 4)
-            .fill(Color(.secondarySystemBackground))
-            .shadow(color: .secondary.opacity(0.3), radius: 2, x: 2, y: 2)
+        .background(
+            RoundedRectangle(cornerRadius: 4)
+                .fill(Color(.secondarySystemBackground))
+                .shadow(color: .secondary.opacity(0.3), radius: 2, x: 2, y: 2)
         )
     }
 }
 
 #Preview {
-    StepBarChart(selectedStat: .steps, chartData: MockData.steps)
+    StepBarChart(selectedStat: .steps, chartData: [])  //MockData.steps)
 }
