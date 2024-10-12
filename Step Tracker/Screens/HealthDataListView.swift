@@ -62,9 +62,9 @@ struct HealthDataListView: View {
                    error: writeError,
                    actions: { writeError in
                 switch writeError {
-                case .authNotDetermined, .noData, .unableToCompleteRequest:
+                case .authNotDetermined, .noData, .unableToCompleteRequest, .invalidValue:
                     EmptyView()
-                case .sharingDenied(let quantityType):
+                case .sharingDenied:
                     Button("Settings") {
                         UIApplication.shared.open(URL(string: UIApplication.openSettingsURLString)!)
                     }
@@ -78,16 +78,23 @@ struct HealthDataListView: View {
             .toolbar {
                 ToolbarItem(placement: .topBarTrailing) {
                     Button("Add Data") {
+                        guard let value = Double(valueToAdd) else {
+                            writeError = .invalidValue
+                            isShowingAlert = true
+                            valueToAdd = ""
+                            return
+                        }
+
                         Task {
                             do {
                                 switch metric {
                                 case .steps:
                                     try await hkManager.addStepData(for: selectedDate,
-                                                                value: Double(valueToAdd)!)
+                                                                value: value)
                                     try await hkManager.fetchStepCount()
                                 case .weight:
                                     try await hkManager.addWeightData(for: selectedDate,
-                                                                  value: Double(valueToAdd)!)
+                                                                  value: value)
                                     try await hkManager.fetchWeights()
                                 }
                                 isShowingAddData = false
