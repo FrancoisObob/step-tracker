@@ -11,131 +11,91 @@ import SwiftUI
 struct WeightBarChart: View {
     @State var selectedDate: Date?
 
-    var selectedStat: HealthMetricContext
-    var chartData: [WeekdayChartData]
+    var chartData: [DateValueChartData]
 
-    var selectedWeekday: WeekdayChartData? {
-        guard let selectedDate else { return nil }
-
-        return chartData.first {
-            Calendar.current.isDate($0.date, inSameDayAs: selectedDate)
-        }
+    var selectedData: DateValueChartData? {
+        chartData.selectedData(in: selectedDate)
     }
 
     var body: some View {
         VStack(alignment: .leading) {
-            VStack(alignment: .leading) {
-                Label("Average Weight Change", systemImage: "figure")
-                    .font(.title3.bold())
-                    .foregroundStyle(selectedStat.tintColor)
-
-                Text("Per Weekday (Last 28 days)")
-                    .font(.caption)
-                    .foregroundStyle(.secondary)
-
-            }
-            .padding(.bottom, 12)
-
-            if chartData.isEmpty {
-                ChartEmptyView(
-                    systemImageName: "chart.bar",
-                    title: "No Data",
-                    description:
-                        "There is no weight data found in Health app.")
-            } else {
-                Chart {
-                    if let selectedWeekday {
-                        RuleMark(
-                            x: .value(
-                                "Selected Weekday", selectedWeekday.date,
-                                unit: .day)
-                        )
-                        .foregroundStyle(.secondary.opacity(0.3))
-                        .offset(y: -10)
-                        .annotation(
-                            position: .top,
-                            spacing: 0,
-                            overflowResolution: .init(
-                                x: .fit(to: .chart),
-                                y: .disabled)
-                        ) { annotationView }
-                    }
-
-                    ForEach(chartData) { weightDiff in
-                        BarMark(
-                            x: .value("Date", weightDiff.date, unit: .day),
-                            y: .value("Weights", weightDiff.value)
-                        )
-                        .foregroundStyle(
-                            weightDiff.value >= 0
-                                ? selectedStat.tintColor.gradient
-                                : Color.mint.gradient
-                        )
-                        .opacity(
-                            selectedWeekday == nil
-                                || weightDiff.date == selectedWeekday?.date
-                                ? 1.0 : 0.3)
-                    }
-                }
-                .frame(height: 150)
-                .chartXSelection(value: $selectedDate.animation(.easeInOut))
-                .chartXAxis {
-                    AxisMarks(values: .stride(by: .day)) {
-                        AxisValueLabel(
-                            format: .dateTime.weekday(), centered: true)
-                    }
-
-                }
-                .chartYAxis {
-                    AxisMarks { value in
-                        AxisGridLine()
+            ChartContainer(
+                title: "Average Weight Change",
+                symbol: "figure",
+                subtitle: "Per Weekday (Last 28 days)",
+                context: .weight,
+                isNav: false
+            ) {
+                if chartData.isEmpty {
+                    ChartEmptyView(
+                        systemImageName: "chart.bar",
+                        title: "No Data",
+                        description:
+                            "There is no weight data found in Health app.")
+                } else {
+                    Chart {
+                        if let selectedData {
+                            RuleMark(
+                                x: .value(
+                                    "Selected Weekday", selectedData.date,
+                                    unit: .day)
+                            )
                             .foregroundStyle(.secondary.opacity(0.3))
-                        AxisValueLabel(
-                            (value.as(Double.self) ?? 0).formatted(
-                                .number.notation(.compactName)))
+                            .offset(y: -10)
+                            .annotation(
+                                position: .top,
+                                spacing: 0,
+                                overflowResolution: .init(
+                                    x: .fit(to: .chart),
+                                    y: .disabled)
+                            ) {
+                                ChartAnnotationView(
+                                    data: selectedData,
+                                    context: .weight)
+                            }
+                        }
+
+                        ForEach(chartData) { weightDiff in
+                            BarMark(
+                                x: .value("Date", weightDiff.date, unit: .day),
+                                y: .value("Weights", weightDiff.value)
+                            )
+                            .foregroundStyle(
+                                weightDiff.value >= 0
+                                ? HealthMetricContext.weight.tintColor.gradient
+                                    : Color.mint.gradient
+                            )
+                            .opacity(
+                                selectedData == nil
+                                    || weightDiff.date == selectedData?.date
+                                    ? 1.0 : 0.3)
+                        }
+                    }
+                    .frame(height: 150)
+                    .chartXSelection(value: $selectedDate.animation(.easeInOut))
+                    .chartXAxis {
+                        AxisMarks(values: .stride(by: .day)) {
+                            AxisValueLabel(
+                                format: .dateTime.weekday(), centered: true)
+                        }
+
+                    }
+                    .chartYAxis {
+                        AxisMarks { value in
+                            AxisGridLine()
+                                .foregroundStyle(.secondary.opacity(0.3))
+                            AxisValueLabel(
+                                (value.as(Double.self) ?? 0).formatted(
+                                    .number.notation(.compactName)))
+                        }
                     }
                 }
             }
         }
-        .padding()
-        .background(
-            RoundedRectangle(cornerRadius: 12).fill(
-                Color(.secondarySystemBackground))
-        )
         .sensoryFeedback(.selection, trigger: selectedDate?.weekdayInt)
-    }
-
-    var annotationView: some View {
-        VStack(alignment: .leading) {
-            Text(
-                selectedWeekday?.date ?? .now,
-                format: .dateTime.weekday(.abbreviated).month(.abbreviated)
-                    .day()
-            )
-            .font(.footnote.bold())
-            .foregroundStyle(.secondary)
-
-            Text(
-                selectedWeekday?.value ?? 0,
-                format: .number.precision(.fractionLength(2))
-            )
-            .fontWeight(.heavy)
-            .foregroundStyle(
-                (selectedWeekday?.value ?? 0) >= 0
-                    ? selectedStat.tintColor : .mint)
-
-        }
-        .padding()
-        .background(
-            RoundedRectangle(cornerRadius: 4)
-                .fill(Color(.secondarySystemBackground))
-                .shadow(color: .secondary.opacity(0.3), radius: 2, x: 2, y: 2)
-        )
     }
 }
 
 #Preview {
-    WeightBarChart(
-        selectedStat: .weight,
-        chartData: ChartMath.averageDailyWeightDiffs(for: MockData.weights))
+    WeightBarChart(chartData: MockData.weights.averageDailyWeightDiffsData)
 }

@@ -52,8 +52,8 @@ enum STError: LocalizedError {
     //    var stepData: [HealthMetric] = MockData.steps
     //    var weightData: [HealthMetric] = MockData.weights
 
-    var stepData: [HealthMetric] = []
-    var weightData: [HealthMetric] = []
+    var steps: [HealthMetric] = []
+    var weights: [HealthMetric] = []
 
     func fetchWeights() async throws {
         guard
@@ -80,12 +80,12 @@ enum STError: LocalizedError {
         )
 
         do {
-            let weights = try await weightsQuery.result(for: store)
-            weightData = weights.statistics().map {
+            let weightsStats = try await weightsQuery.result(for: store)
+            self.weights = weightsStats.statistics().map {
                 .init(
                     date: $0.startDate,
                     value: $0.mostRecentQuantity()?.doubleValue(for: .pound())
-                        ?? 0)
+                    ?? 0)
             }
         } catch HKError.errorNoData {
             throw STError.noData
@@ -120,7 +120,7 @@ enum STError: LocalizedError {
 
         do {
             let stepsCounts = try await stepsQuery.result(for: store)
-            stepData = stepsCounts.statistics().map {
+            steps = stepsCounts.statistics().map {
                 .init(
                     date: $0.startDate,
                     value: $0.sumQuantity()?.doubleValue(for: .count()) ?? 0)

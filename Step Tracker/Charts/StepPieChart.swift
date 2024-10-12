@@ -12,10 +12,9 @@ struct StepPieChart: View {
 
     @State private var selectedChartValue: Double? = 0
 
-    var selectedStat: HealthMetricContext
-    var chartData: [WeekdayChartData]
+    var chartData: [DateValueChartData]
 
-    var selectedWeekday: WeekdayChartData? {
+    var selectedWeekday: DateValueChartData? {
         guard let selectedChartValue else { return nil }
         var total = 0.0
         return chartData.first {
@@ -26,76 +25,67 @@ struct StepPieChart: View {
 
     var body: some View {
         VStack(alignment: .leading) {
-            VStack(alignment: .leading) {
-                Label("Averages", systemImage: "calendar")
-                    .font(.title3.bold())
-                    .foregroundStyle(selectedStat.tintColor)
-
-                Text("Last 28 days")
-                    .font(.caption)
-                    .foregroundStyle(.secondary)
-
-            }
-            .padding(.bottom, 12)
-
-            if chartData.isEmpty {
-                ChartEmptyView(
-                    systemImageName: "chart.pie",
-                    title: "No Data",
-                    description:
-                        "There is no step count data found in Health app.")
-            } else {
-                Chart {
-                    ForEach(chartData) { weekday in
-                        SectorMark(
-                            angle: .value("Average Steps", weekday.value),
-                            innerRadius: .ratio(0.618),
-                            outerRadius: (selectedWeekday?.date.weekdayInt
-                                == weekday.date.weekdayInt) ? 140 : 110,
-                            angularInset: 1
-                        )
-                        .foregroundStyle(selectedStat.tintColor.gradient)
-                        .cornerRadius(5)
-                        .opacity(
-                            (selectedWeekday?.date.weekdayInt
-                                == weekday.date.weekdayInt) ? 1 : 0.5)
+            ChartContainer(
+                title: "Averages",
+                symbol: "calendar",
+                subtitle: "Last 28 days",
+                context: .steps,
+                isNav: false
+            ) {
+                if chartData.isEmpty {
+                    ChartEmptyView(
+                        systemImageName: "chart.pie",
+                        title: "No Data",
+                        description:
+                            "There is no step count data found in Health app.")
+                } else {
+                    Chart {
+                        ForEach(chartData) { weekday in
+                            SectorMark(
+                                angle: .value("Average Steps", weekday.value),
+                                innerRadius: .ratio(0.618),
+                                outerRadius: (selectedWeekday?.date.weekdayInt
+                                              == weekday.date.weekdayInt) ? 140 : 110,
+                                angularInset: 1
+                            )
+                            .foregroundStyle(HealthMetricContext.steps.tintColor.gradient)
+                            .cornerRadius(5)
+                            .opacity(
+                                (selectedWeekday?.date.weekdayInt
+                                 == weekday.date.weekdayInt) ? 1 : 0.5)
+                        }
                     }
-                }
-                .chartAngleSelection(
-                    value: $selectedChartValue.animation(.easeInOut)
-                )
-                .frame(height: 240)
-                .chartBackground { proxy in
-                    GeometryReader { geometry in
-                        if proxy.plotFrame != nil {
-                            let frame = geometry.frame(in: .local)
-                            if let selectedWeekday {
-                                VStack {
-                                    Text(selectedWeekday.date.weekdayTitle)
-                                        .font(.title3.bold())
-                                        .animation(nil)
+                    .chartAngleSelection(
+                        value: $selectedChartValue.animation(.easeInOut)
+                    )
+                    .frame(height: 240)
+                    .chartBackground { proxy in
+                        GeometryReader { geometry in
+                            if proxy.plotFrame != nil {
+                                let frame = geometry.frame(in: .local)
+                                if let selectedWeekday {
+                                    VStack {
+                                        Text(selectedWeekday.date.weekdayTitle)
+                                            .font(.title3.bold())
+                                            .animation(nil)
 
-                                    Text(
-                                        selectedWeekday.value,
-                                        format: .number.precision(
-                                            .fractionLength(0))
-                                    )
-                                    .fontWeight(.medium)
-                                    .foregroundStyle(.secondary)
-                                    .contentTransition(.numericText())
+                                        Text(
+                                            selectedWeekday.value,
+                                            format: .number.precision(
+                                                .fractionLength(0))
+                                        )
+                                        .fontWeight(.medium)
+                                        .foregroundStyle(.secondary)
+                                        .contentTransition(.numericText())
+                                    }
+                                    .position(x: frame.midX, y: frame.midY)
                                 }
-                                .position(x: frame.midX, y: frame.midY)
                             }
                         }
                     }
                 }
             }
         }
-        .padding()
-        .background(
-            RoundedRectangle(cornerRadius: 12).fill(
-                Color(.secondarySystemBackground))
-        )
         .sensoryFeedback(.selection, trigger: selectedWeekday?.date.weekdayInt)
         .onChange(of: selectedChartValue) { oldValue, newValue in
             if newValue == nil {
@@ -106,7 +96,5 @@ struct StepPieChart: View {
 }
 
 #Preview {
-    StepPieChart(
-        selectedStat: .steps,
-        chartData: ChartMath.averageWeekdayCount(for: MockData.steps))
+    StepPieChart(chartData: MockData.steps.averageWeekdayCountData)
 }

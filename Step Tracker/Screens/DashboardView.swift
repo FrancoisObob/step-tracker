@@ -26,6 +26,13 @@ enum HealthMetricContext: CaseIterable, Identifiable {
         case .weight: return .indigo
         }
     }
+
+    var fractionLength: Int {
+        switch self {
+        case .steps: 0
+        case .weight: 1
+        }
+    }
 }
 
 struct DashboardView: View {
@@ -47,22 +54,16 @@ struct DashboardView: View {
                     }
                     .pickerStyle(.segmented)
 
-
                     switch selectedStat {
                     case .steps:
-                        StepBarChart(selectedStat: selectedStat,
-                                     chartData: hkManager.stepData)
+                        StepBarChart(chartData: hkManager.steps.chartData)
 
-                        StepPieChart(selectedStat: selectedStat,
-                                     chartData: ChartMath.averageWeekdayCount(for: hkManager.stepData))
+                        StepPieChart(chartData: hkManager.steps.averageWeekdayCountData)
                     case .weight:
-                        WeightLineChart(selectedStat: selectedStat,
-                                        chartData: hkManager.weightData)
+                        WeightLineChart(chartData: hkManager.weights.chartData)
 
-                        WeightBarChart(selectedStat: selectedStat,
-                                       chartData: ChartMath.averageDailyWeightDiffs(for: hkManager.weightData))
+                        WeightBarChart(chartData: hkManager.weights.averageDailyWeightDiffsData)
                     }
-
                 }
             }
             .padding()

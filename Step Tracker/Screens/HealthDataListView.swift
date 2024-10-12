@@ -19,7 +19,7 @@ struct HealthDataListView: View {
     var metric: HealthMetricContext
 
     var listData: [HealthMetric] {
-        metric == .steps ? hkManager.stepData : hkManager.weightData
+        metric == .steps ? hkManager.steps : hkManager.weights
     }
 
     var body: some View {
