@@ -23,13 +23,15 @@ struct WeightLineChart: View {
 
     var body: some View {
         VStack {
-            ChartContainer(
+            let config = ChartContainerConfiguration(
                 title: "Weight",
                 symbol: "figure",
                 subtitle: "Avg: 180 lbs",
                 context: .weight,
                 isNav: true
-            ) {
+            )
+
+            ChartContainer(config: config) {
                 if chartData.isEmpty {
                     ChartEmptyView(
                         systemImageName: "chart.line.downtrend.xyaxis",
@@ -39,25 +41,7 @@ struct WeightLineChart: View {
                 } else {
                     Chart {
                         if let selectedData {
-                            RuleMark(
-                                x: .value(
-                                    "Selected Metric",
-                                    selectedData.date,
-                                    unit: .day)
-                            )
-                            .foregroundStyle(.secondary.opacity(0.3))
-                            //                        .offset(y: -10)
-                            .annotation(
-                                position: .automatic,
-                                spacing: 0,
-                                overflowResolution: .init(
-                                    x: .fit(to: .chart),
-                                    y: .disabled)
-                            ) {
-                                ChartAnnotationView(
-                                    data: selectedData,
-                                    context: .weight)
-                            }
+                            ChartAnnotationView(data: selectedData, context: .weight)
                         }
 
                         RuleMark(y: .value("Goal", 155))

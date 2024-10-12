@@ -19,13 +19,14 @@ struct StepBarChart: View {
     }
 
     var body: some View {
-        ChartContainer(
+        let config = ChartContainerConfiguration(
             title: "Steps",
             symbol: "figure.walk",
             subtitle: "Avg: \(Int(chartData.avgStepCounts)) Steps",
             context: .steps,
-            isNav: true
-        ) {
+            isNav: true)
+
+        ChartContainer(config: config) {
             if chartData.isEmpty {
                 ChartEmptyView(
                     systemImageName: "chart.bar", title: "No Data",
@@ -35,24 +36,7 @@ struct StepBarChart: View {
             } else {
                 Chart {
                     if let selectedData {
-                        RuleMark(
-                            x: .value(
-                                "Selected Metric", selectedData.date,
-                                unit: .day)
-                        )
-                        .foregroundStyle(.secondary.opacity(0.3))
-                        .offset(y: -10)
-                        .annotation(
-                            position: .top,
-                            spacing: 0,
-                            overflowResolution: .init(
-                                x: .fit(to: .chart),
-                                y: .disabled)
-                        ) {
-                            ChartAnnotationView(
-                                data: selectedData,
-                                context: .steps)
-                        }
+                        ChartAnnotationView(data: selectedData, context: .steps)
                     }
 
                     RuleMark(y: .value("Average", chartData.avgStepCounts))
