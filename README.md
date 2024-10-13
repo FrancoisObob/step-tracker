@@ -12,7 +12,9 @@ Step Tracker also allows you to upload new step or weight data to the Apple Heal
 * Git & GitHub
 
 # Animated Swift Charts
-https://github.com/SAllen0400/step-readme/assets/10645516/2b4bc7c7-580c-49bf-9d13-38a55be0263c
+https://github.com/user-attachments/assets/d60f27cf-3556-41df-9e35-fce0a8338d64
+
+
 
 # I'm Most Proud Of...
 The average weight difference per day of the week bar chart. Determining which day of the week were problem days for someone trying to lose weight struck me as a great insight to surface from the weight data. 
@@ -22,37 +24,29 @@ I pulled the last 29 days of weights and ran a calculation to track the differen
 Here's the code:
 
 ```swift
-    static func averageDiffFromPreviousDay(for weights: [HealthMetric]) -> [HealthMetric] {
+    var averageDailyWeightDiffsData: [DateValueChartData] {
         var diffValues: [(date: Date, value: Double)] = []
 
-        for i in 0..<weights.count {
-            if i == 0 {
-                diffValues.append((weights[i].date, 0.0))
-            } else {
-                let date = weights[i].date
-                let weightDiff = weights[i].value - weights[i - 1].value
-                diffValues.append((date, weightDiff))
+        guard self.count > 1 else { return [] }
+
+        for i in 1..<self.count {
+            let date = self[i].date
+            let diff = self[i].value - self[i-1].value
+            diffValues.append((date: date, value: diff))
+        }
+
+        return diffValues
+            .sorted(using: KeyPathComparator(\.date.weekdayInt))
+            .chunked { $0.date.weekdayInt == $1.date.weekdayInt }
+            .map { .init(date: $0.first!.date,
+                         value: $0.reduce(0) { $0 + $1.value } / Double($0.count))
             }
-        }
-
-        let sortedByWeekday = diffValues.sorted { $0.date.weekdayInt > $1.date.weekdayInt }
-        let weekdayArray = sortedByWeekday.chunked { $0.date.weekdayInt == $1.date.weekdayInt }
-
-        var chartData: [HealthMetric] = []
-
-        for array in weekdayArray {
-            guard let firstValue = array.first else { continue }
-            let valuesTotal = array.reduce(0) { $0 + $1.value }
-            let averageValue = valuesTotal / Double(array.count)
-            chartData.append(.init(value: averageValue, date: firstValue.date))
-        }
-        return chartData.sorted { $0.value > $1.value }
     }
 ```
 <br>
 </br>
 
-![readme-weight-diff](https://github.com/SAllen0400/step-readme/assets/10645516/afdef8cb-9e40-4fac-9548-87dbb708a35c)
+![readme-weight-diff](https://github.com/user-attachments/assets/4a3cb68a-569e-4166-b240-f28979f6db74)
 
 
 # Completeness
