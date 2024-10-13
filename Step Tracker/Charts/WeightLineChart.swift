@@ -17,21 +17,17 @@ struct WeightLineChart: View {
         chartData.map { $0.value }.min() ?? 0
     }
 
+    var average: Double {
+        chartData.reduce(0) { $0 + $1.value } / Double(chartData.count)
+    }
+
     var selectedData: DateValueChartData? {
         chartData.selectedData(in: selectedDate)
     }
 
     var body: some View {
         VStack {
-            let config = ChartContainerConfiguration(
-                title: "Weight",
-                symbol: "figure",
-                subtitle: "Avg: 180 lbs",
-                context: .weight,
-                isNav: true
-            )
-
-            ChartContainer(config: config) {
+            ChartContainer(type: .weightLine(average: average)) {
                 Chart {
                     if let selectedData {
                         ChartAnnotationView(

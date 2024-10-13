@@ -24,14 +24,7 @@ struct StepPieChart: View {
 
     var body: some View {
         VStack(alignment: .leading) {
-            let config = ChartContainerConfiguration(
-                title: "Averages",
-                symbol: "calendar",
-                subtitle: "Last 28 days",
-                context: .steps,
-                isNav: false)
-
-            ChartContainer(config: config) {
+            ChartContainer(type: .stepWeekdayPie) {
                 Chart {
                     ForEach(chartData) { weekday in
                         SectorMark(

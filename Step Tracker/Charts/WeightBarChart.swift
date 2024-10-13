@@ -19,15 +19,7 @@ struct WeightBarChart: View {
 
     var body: some View {
         VStack(alignment: .leading) {
-            let config = ChartContainerConfiguration(
-                title: "Average Weight Change",
-                symbol: "figure",
-                subtitle: "Per Weekday (Last 28 days)",
-                context: .weight,
-                isNav: false
-            )
-
-            ChartContainer(config: config) {
+            ChartContainer(type: .weightDiffBar) {
                 Chart {
                     if let selectedData {
                         ChartAnnotationView(
