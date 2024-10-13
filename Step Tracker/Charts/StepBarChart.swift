@@ -27,50 +27,52 @@ struct StepBarChart: View {
             isNav: true)
 
         ChartContainer(config: config) {
-            if chartData.isEmpty {
-                ChartEmptyView(
-                    systemImageName: "chart.bar", title: "No Data",
-                    description:
-                        "There is no step count data found in Health app.")
+            Chart {
+                if let selectedData {
+                    ChartAnnotationView(data: selectedData, context: .steps)
+                }
 
-            } else {
-                Chart {
-                    if let selectedData {
-                        ChartAnnotationView(data: selectedData, context: .steps)
-                    }
-
+                if !chartData.isEmpty {
                     RuleMark(y: .value("Average", chartData.avgStepCounts))
                         .foregroundStyle(.secondary)
                         .lineStyle(.init(lineWidth: 1, dash: [5]))
+                }
 
-                    ForEach(chartData) { steps in
-                        BarMark(
-                            x: .value("Date", steps.date, unit: .day),
-                            y: .value("Steps", steps.value)
-                        )
-                        .foregroundStyle(HealthMetricContext.steps.tintColor)
-                        .opacity(
-                            selectedDate == nil
-                                || steps.date == selectedData?.date
-                                ? 1.0 : 0.3)
-                    }
+                ForEach(chartData) { steps in
+                    BarMark(
+                        x: .value("Date", steps.date, unit: .day),
+                        y: .value("Steps", steps.value)
+                    )
+                    .foregroundStyle(HealthMetricContext.steps.tintColor)
+                    .opacity(
+                        selectedDate == nil
+                            || steps.date == selectedData?.date
+                            ? 1.0 : 0.3)
                 }
-                .frame(height: 150)
-                .chartXSelection(value: $selectedDate.animation())
-                .chartXAxis {
-                    AxisMarks {
-                        AxisValueLabel(
-                            format: .dateTime.month(.defaultDigits).day())
-                    }
+            }
+            .frame(height: 150)
+            .chartXSelection(value: $selectedDate.animation())
+            .chartXAxis {
+                AxisMarks {
+                    AxisValueLabel(
+                        format: .dateTime.month(.defaultDigits).day())
                 }
-                .chartYAxis {
-                    AxisMarks { value in
-                        AxisGridLine()
-                            .foregroundStyle(.secondary.opacity(0.3))
-                        AxisValueLabel(
-                            (value.as(Double.self) ?? 0).formatted(
-                                .number.notation(.compactName)))
-                    }
+            }
+            .chartYAxis {
+                AxisMarks { value in
+                    AxisGridLine()
+                        .foregroundStyle(.secondary.opacity(0.3))
+                    AxisValueLabel(
+                        (value.as(Double.self) ?? 0).formatted(
+                            .number.notation(.compactName)))
+                }
+            }
+            .overlay {
+                if chartData.isEmpty {
+                    ChartEmptyView(
+                        systemImageName: "chart.bar", title: "No Data",
+                        description:
+                            "There is no step count data found in Health app.")
                 }
             }
         }
@@ -79,5 +81,6 @@ struct StepBarChart: View {
 }
 
 #Preview {
-    StepBarChart(chartData: MockData.steps.chartData)
+//    StepBarChart(chartData: MockData.steps.chartData)
+    StepBarChart(chartData: [])
 }

@@ -25,9 +25,11 @@ struct HealthDataListView: View {
     var body: some View {
         List(listData) { data in
             HStack {
-                Text(data.date, format: .dateTime.month().day().year())
-                Spacer()
-                Text(data.value, format: .number.precision(.fractionLength(metric == .steps ? 0 : 1)))
+                LabeledContent {
+                    Text(data.value, format: .number.precision(.fractionLength(metric == .steps ? 0 : 1)))
+                } label: {
+                    Text(data.date, format: .dateTime.month().day().year())
+                }
             }
         }
         .navigationTitle(metric.title)
@@ -48,9 +50,8 @@ struct HealthDataListView: View {
                            selection: $selectedDate,
                            in: .distantPast...Date(),
                            displayedComponents: .date)
-                HStack {
-                    Text(metric.title)
-                    Spacer()
+
+                LabeledContent(metric.title) {
                     TextField("Value", text: $valueToAdd)
                         .multilineTextAlignment(.trailing)
                         .frame(width: 150)

@@ -32,59 +32,62 @@ struct WeightLineChart: View {
             )
 
             ChartContainer(config: config) {
-                if chartData.isEmpty {
-                    ChartEmptyView(
-                        systemImageName: "chart.line.downtrend.xyaxis",
-                        title: "No Data",
-                        description:
-                            "There is no weight data found in Health app.")
-                } else {
-                    Chart {
-                        if let selectedData {
-                            ChartAnnotationView(data: selectedData, context: .weight)
-                        }
-
-                        RuleMark(y: .value("Goal", 155))
-                            .foregroundStyle(.mint)
-                            .lineStyle(.init(lineWidth: 1, dash: [5]))
-
-                        ForEach(chartData) { weight in
-                            AreaMark(
-                                x: .value("Day", weight.date, unit: .day),
-                                yStart: .value("Value", weight.value),
-                                yEnd: .value("Min Value", minValue)
-                            )
-                            .foregroundStyle(
-                                Gradient(colors: [
-                                    HealthMetricContext.weight.tintColor.opacity(0.5), .clear,
-                                ])
-                            )
-                            .interpolationMethod(.catmullRom)
-
-                            LineMark(
-                                x: .value("Day", weight.date, unit: .day),
-                                y: .value("Value", weight.value)
-                            )
-                            .foregroundStyle(HealthMetricContext.weight.tintColor)
-                            .interpolationMethod(.catmullRom)
-                            .symbol(.circle)
-                        }
+                Chart {
+                    if let selectedData {
+                        ChartAnnotationView(
+                            data: selectedData, context: .weight)
                     }
-                    .frame(height: 150)
-                    .chartXSelection(value: $selectedDate)
-                    .chartYScale(domain: .automatic(includesZero: false))
-                    .chartXAxis {
-                        AxisMarks {
-                            AxisValueLabel(
-                                format: .dateTime.month(.defaultDigits).day())
-                        }
+
+                    RuleMark(y: .value("Goal", 155))
+                        .foregroundStyle(.mint)
+                        .lineStyle(.init(lineWidth: 1, dash: [5]))
+
+                    ForEach(chartData) { weight in
+                        AreaMark(
+                            x: .value("Day", weight.date, unit: .day),
+                            yStart: .value("Value", weight.value),
+                            yEnd: .value("Min Value", minValue)
+                        )
+                        .foregroundStyle(
+                            Gradient(colors: [
+                                HealthMetricContext.weight.tintColor.opacity(
+                                    0.5), .clear,
+                            ])
+                        )
+                        .interpolationMethod(.catmullRom)
+
+                        LineMark(
+                            x: .value("Day", weight.date, unit: .day),
+                            y: .value("Value", weight.value)
+                        )
+                        .foregroundStyle(HealthMetricContext.weight.tintColor)
+                        .interpolationMethod(.catmullRom)
+                        .symbol(.circle)
                     }
-                    .chartYAxis {
-                        AxisMarks { value in
-                            AxisGridLine()
-                                .foregroundStyle(.secondary.opacity(0.3))
-                            AxisValueLabel()
-                        }
+                }
+                .frame(height: 150)
+                .chartXSelection(value: $selectedDate)
+                .chartYScale(domain: .automatic(includesZero: false))
+                .chartXAxis {
+                    AxisMarks {
+                        AxisValueLabel(
+                            format: .dateTime.month(.defaultDigits).day())
+                    }
+                }
+                .chartYAxis {
+                    AxisMarks { value in
+                        AxisGridLine()
+                            .foregroundStyle(.secondary.opacity(0.3))
+                        AxisValueLabel()
+                    }
+                }
+                .overlay {
+                    if chartData.isEmpty {
+                        ChartEmptyView(
+                            systemImageName: "chart.bar",
+                            title: "No Data",
+                            description:
+                                "There is no weight data found in Health app.")
                     }
                 }
             }

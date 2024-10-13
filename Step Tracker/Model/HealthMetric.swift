@@ -20,7 +20,7 @@ extension [HealthMetric] {
     }
 
     var averageWeekdayCountData: [DateValueChartData] {
-        sorted { $0.date.weekdayInt < $1.date.weekdayInt }
+        sorted(using: KeyPathComparator(\.date.weekdayInt))
             .chunked { $0.date.weekdayInt == $1.date.weekdayInt }
             .map { .init(date: $0.first!.date,
                          value: $0.reduce(0) { $0 + $1.value } / Double($0.count))
@@ -39,7 +39,7 @@ extension [HealthMetric] {
         }
 
         return diffValues
-            .sorted { $0.date.weekdayInt < $1.date.weekdayInt }
+            .sorted(using: KeyPathComparator(\.date.weekdayInt))
             .chunked { $0.date.weekdayInt == $1.date.weekdayInt }
             .map { .init(date: $0.first!.date,
                          value: $0.reduce(0) { $0 + $1.value } / Double($0.count))
