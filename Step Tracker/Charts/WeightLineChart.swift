@@ -13,21 +13,13 @@ struct WeightLineChart: View {
 
     var chartData: [DateValueChartData]
 
-    var minValue: Double {
-        chartData.map { $0.value }.min() ?? 0
-    }
-
-    var average: Double {
-        chartData.reduce(0) { $0 + $1.value } / Double(chartData.count)
-    }
-
     var selectedData: DateValueChartData? {
         chartData.selectedData(in: selectedDate)
     }
 
     var body: some View {
         VStack {
-            ChartContainer(type: .weightLine(average: average)) {
+            ChartContainer(type: .weightLine(average: chartData.average)) {
                 Chart {
                     if let selectedData {
                         ChartAnnotationView(
@@ -42,7 +34,7 @@ struct WeightLineChart: View {
                         AreaMark(
                             x: .value("Day", weight.date, unit: .day),
                             yStart: .value("Value", weight.value),
-                            yEnd: .value("Min Value", minValue)
+                            yEnd: .value("Min Value", chartData.minValue)
                         )
                         .foregroundStyle(
                             Gradient(colors: [

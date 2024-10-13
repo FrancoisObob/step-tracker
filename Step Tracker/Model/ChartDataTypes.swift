@@ -27,4 +27,12 @@ extension [DateValueChartData] {
             Calendar.current.isDate($0.date, inSameDayAs: date)
         }
     }
+
+    var minValue: Double {
+        self.map { $0.value }.min() ?? 0
+    }
+
+    var average: Double {
+        self.reduce(0) { $0 + $1.value } / Double(self.count)
+    }
 }
