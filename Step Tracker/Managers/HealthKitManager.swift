@@ -21,7 +21,10 @@ import Observation
 
     var steps: [HealthMetric] = []
     var weights: [HealthMetric] = []
-
+    
+    /// Fetch last 28 days of step count from HealthKit.
+    ///
+    /// - Returns: Array of ``HealthMetric``
     func fetchStepCount() async throws -> [HealthMetric] {
         guard
             store.authorizationStatus(for: HKQuantityType(.stepCount))
@@ -53,7 +56,9 @@ import Observation
             throw STError.unableToCompleteRequest
         }
     }
-
+    
+    /// Fetch last 28 days of step count from HealthKit.
+    /// - Returns: Array of ``HealthMetric``
     func fetchWeights() async throws -> [HealthMetric] {
         guard
             store.authorizationStatus(for: HKQuantityType(.bodyMass))
