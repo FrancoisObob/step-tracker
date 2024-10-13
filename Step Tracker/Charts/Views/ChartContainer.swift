@@ -64,6 +64,19 @@ enum ChartType {
         case .stepWeekdayPie, .weightDiffBar: return false
         }
     }
+
+    var accessibilityLabel: String {
+        switch self {
+        case .stepBar(let average):
+            "Bar chart, step count, last 28 days, average steps per day: \(Int(average)) steps"
+        case .stepWeekdayPie:
+            "Pie chart, average steps per weekday"
+        case .weightLine(let average):
+            "Line chart, average weight: \(average.formatted(.number.precision(.fractionLength(1)))) pounds, goal weight of: 155 pounds"
+        case .weightDiffBar:
+            "Bar chart, average weight difference per weekday"
+        }
+    }
 }
 
 struct ChartContainer<Content: View>: View {
@@ -98,6 +111,7 @@ struct ChartContainer<Content: View>: View {
         }
         .foregroundStyle(.secondary)
         .padding(.bottom, 12)
+        .accessibilityHint("Tap for data in list view")
     }
 
     var titleView: some View {
@@ -111,6 +125,9 @@ struct ChartContainer<Content: View>: View {
         }
         .foregroundStyle(.secondary)
         .padding(.bottom, 12)
+        .accessibilityAddTraits(.isHeader)
+        .accessibilityLabel(type.accessibilityLabel)
+        .accessibilityElement(children: .ignore)
     }
 }
 

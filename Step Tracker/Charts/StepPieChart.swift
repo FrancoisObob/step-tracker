@@ -38,9 +38,9 @@ struct StepPieChart: View {
                             HealthMetricContext.steps.tintColor.gradient
                         )
                         .cornerRadius(5)
-                        .opacity(
-                            (selectedWeekday?.date.weekdayInt
-                                == weekday.date.weekdayInt) ? 1 : 0.5)
+                        .opacity((selectedWeekday?.date.weekdayInt == weekday.date.weekdayInt) ? 1 : 0.5)
+                        .accessibilityLabel(weekday.date.weekdayTitle)
+                        .accessibilityValue("\(Int(weekday.value)) steps")
                     }
                 }
                 .chartAngleSelection(value: $selectedChartValue)
@@ -65,6 +65,7 @@ struct StepPieChart: View {
                                     .contentTransition(.numericText())
                                 }
                                 .position(x: frame.midX, y: frame.midY)
+                                .accessibilityHidden(true)
                             }
                         }
                     }

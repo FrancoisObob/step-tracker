@@ -27,20 +27,21 @@ struct WeightBarChart: View {
                     }
 
                     ForEach(chartData) { weightDiff in
-                        BarMark(
-                            x: .value("Date", weightDiff.date, unit: .day),
-                            y: .value("Weights", weightDiff.value)
-                        )
-                        .foregroundStyle(
-                            weightDiff.value >= 0
+                        Plot {
+                            BarMark(
+                                x: .value("Date", weightDiff.date, unit: .day),
+                                y: .value("Weights", weightDiff.value)
+                            )
+                            .foregroundStyle(
+                                weightDiff.value >= 0
                                 ? HealthMetricContext.weight.tintColor
                                     .gradient
                                 : Color.mint.gradient
-                        )
-                        .opacity(
-                            selectedData == nil
-                                || weightDiff.date == selectedData?.date
-                                ? 1.0 : 0.3)
+                            )
+                            .opacity(selectedData == nil || weightDiff.date == selectedData?.date ? 1.0 : 0.3)
+                        }
+                        .accessibilityLabel(weightDiff.date.weekdayTitle)
+                        .accessibilityValue("\(weightDiff.value.formatted()) pounds")
                     }
                 }
                 .frame(height: 150)
