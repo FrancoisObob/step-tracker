@@ -9,6 +9,7 @@ import SwiftUI
 
 struct HealthDataListView: View {
     @Environment(HealthKitManager.self) private var hkManager
+    @Environment(HealthKitData.self) private var hkData
 
     @State private var isShowingAddData = false
     @State private var selectedDate: Date = .now
@@ -19,7 +20,7 @@ struct HealthDataListView: View {
     var metric: HealthMetricContext
 
     var listData: [HealthMetric] {
-        metric == .steps ? hkManager.steps : hkManager.weights
+        metric == .steps ? hkData.steps : hkData.weights
     }
 
     var body: some View {
@@ -105,10 +106,10 @@ struct HealthDataListView: View {
                 switch metric {
                 case .steps:
                     try await hkManager.addStepData(for: selectedDate, value: value)
-                    hkManager.steps = try await hkManager.fetchStepCount()
+                    hkData.steps = try await hkManager.fetchStepCount()
                 case .weight:
                     try await hkManager.addWeightData(for: selectedDate, value: value)
-                    hkManager.weights = try await hkManager.fetchWeights()
+                    hkData.weights = try await hkManager.fetchWeights()
                 }
 
                 isShowingAddData = false

@@ -38,6 +38,8 @@ enum HealthMetricContext: CaseIterable, Identifiable {
 struct DashboardView: View {
 
     @Environment(HealthKitManager.self) private var hkManager
+    @Environment(HealthKitData.self) private var hkData
+
     @State private var isShowingPermissionPriming = false
     @State private var selectedStat: HealthMetricContext = .steps
     @State private var isPresentingHealthKitPermissionAlert: Bool = false
@@ -56,13 +58,13 @@ struct DashboardView: View {
 
                     switch selectedStat {
                     case .steps:
-                        StepBarChart(chartData: hkManager.steps.chartData)
+                        StepBarChart(chartData: hkData.steps.chartData)
 
-                        StepPieChart(chartData: hkManager.steps.averageWeekdayCountData)
+                        StepPieChart(chartData: hkData.steps.averageWeekdayCountData)
                     case .weight:
-                        WeightLineChart(chartData: hkManager.weights.chartData)
+                        WeightLineChart(chartData: hkData.weights.chartData)
 
-                        WeightBarChart(chartData: hkManager.weights.averageDailyWeightDiffsData)
+                        WeightBarChart(chartData: hkData.weights.averageDailyWeightDiffsData)
                     }
                 }
             }
@@ -96,8 +98,8 @@ struct DashboardView: View {
                 async let steps = hkManager.fetchStepCount()
                 async let weights = hkManager.fetchWeights()
 
-                hkManager.steps = try await steps
-                hkManager.weights = try await weights
+                hkData.steps = try await steps
+                hkData.weights = try await weights
 
             } catch STError.authNotDetermined {
                 isShowingPermissionPriming = true

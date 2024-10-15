@@ -9,18 +9,22 @@ import Foundation
 import HealthKit
 import Observation
 
-@Observable class HealthKitManager {
-
-    let store = HKHealthStore()
-
-    let types: Set = [HKQuantityType(.stepCount), HKQuantityType(.bodyMass)]
-
+@Observable
+@MainActor
+final class HealthKitData: Sendable {
     // Uncomment to use mock data for Preview
     //    var stepData: [HealthMetric] = MockData.steps
     //    var weightData: [HealthMetric] = MockData.weights
 
     var steps: [HealthMetric] = []
     var weights: [HealthMetric] = []
+}
+
+@Observable
+final class HealthKitManager: Sendable {
+    let store = HKHealthStore()
+
+    let types: Set = [HKQuantityType(.stepCount), HKQuantityType(.bodyMass)]
     
     /// Fetch last 28 days of step count from HealthKit.
     ///
