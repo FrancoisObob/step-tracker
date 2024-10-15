@@ -1,5 +1,5 @@
 //
-//  ChartDataTypes.swift
+//  DateValueChartData.swift
 //  Step Tracker
 //
 //  Created by Francois Lambert on 10/7/24.

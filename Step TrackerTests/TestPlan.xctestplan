@@ -1,0 +1,24 @@
+{
+  "configurations" : [
+    {
+      "id" : "C898A8FF-B4BE-495F-B65F-403F94A35DB6",
+      "name" : "Configuration 1",
+      "options" : {
+
+      }
+    }
+  ],
+  "defaultOptions" : {
+    "testTimeoutsEnabled" : true
+  },
+  "testTargets" : [
+    {
+      "target" : {
+        "containerPath" : "container:Step Tracker.xcodeproj",
+        "identifier" : "0F2A719A2CBEF31C00A44CDF",
+        "name" : "Step TrackerTests"
+      }
+    }
+  ],
+  "version" : 1
+}
